@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <header class="header">
       <div class="logo">
-        <img src="/src/assets/Logo CORAM S.A.C..png" alt="Grupo Coram Constructora" />
+        <img src="/src/assets/imagenes/LogoCoram.png" alt="Grupo Coram Constructora" />
       </div>
       <nav class="nav-buttons">
         <router-link to="/clientes" class="nav-btn">MIS CLIENTES</router-link>
@@ -11,7 +11,7 @@
         <router-link to="/asignador-carga-base" class="nav-btn">SUBIR BASE</router-link>
       </nav>
       <div class="user-icon">
-        <img src="/src/assets/images.png" alt="Usuario" />
+        <img src="/src/assets/imagenes/ImgUser.png" alt="Usuario" />
       </div>
     </header>
 

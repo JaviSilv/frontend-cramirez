@@ -3116,7 +3116,7 @@ watch(() => form.value.copropietarios[0]?.conyuge.departamentoCopropietariosCony
 .container {
   height: 100vh;
 
-  background-image: url("@/assets/construction-site-285645_1920.jpg");
+  background-image: url("@/assets/imagenes/FondoDashboard.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
