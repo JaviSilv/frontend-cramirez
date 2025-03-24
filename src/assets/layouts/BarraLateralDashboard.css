@@ -5,7 +5,7 @@
     width: 200px;
     height: calc(100vh - 60px); /* Ajuste para alinearse con la barra superior */
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-    url("@/assets/Imagenes/FondoDashboard.jpg"); /* Desde public/ */
+    url("@/assets/imagenes/FondoDashboard.jpg"); /* Desde public/ */
     background-size: cover;
     background-position: center;
     color: white;
