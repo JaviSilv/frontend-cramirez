@@ -42,10 +42,6 @@
         </p>
 
       </div>
-
-      <div class="welcome-text">
-        <p>BIENVENIDO A CRAMIREZSAC</p>
-      </div>
     </div>
   </div>
 </template>
