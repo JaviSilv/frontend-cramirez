@@ -3153,7 +3153,7 @@ watch(() => form.value.copropietarios[0]?.conyuge.departamentoCopropietariosCony
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 4000px; /* Aumenta el ancho */
+  max-width: 600px; /* Aumenta el ancho */
   margin: auto;
   display: flex;
   flex-direction: column;
