@@ -9,6 +9,14 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
+  preview: {
+    host: true,
+    port: 10000,
+    allowedHosts: [
+      'cramirezsac.onrender.com',
+      'localhost'
+    ]
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true
