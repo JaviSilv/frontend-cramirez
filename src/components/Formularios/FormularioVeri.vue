@@ -85,7 +85,7 @@ export default {
         return;
       }
 
-      fetch(`http://localhost:8080/api/buscarCliente/${this.dni}`)
+      fetch(`https://backendcramirez.onrender.com/api/buscarCliente/${this.dni}`)
           .then(response => response.json())
           .then(data => {
             if (data.nombres) {

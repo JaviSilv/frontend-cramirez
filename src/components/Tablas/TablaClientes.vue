@@ -75,7 +75,7 @@ export default {
           return;
         }
 
-        const response = await axios.get("http://localhost:8080/api/clientes/operario", {
+        const response = await axios.get("https://backendcramirez.onrender.com/api/clientes/operario", {
           headers: {
             "Content-Type": "application/json",
             "X-User-ID": idOperario,
