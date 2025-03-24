@@ -79,24 +79,26 @@ const validateForm = async () => {
     });
 
     const data = await response.json();
-
+    console.log("📡 Respuesta del backend:", data);
 
     if (response.ok) {
-      console.log("✅ Inicio de sesión exitoso:", data);
-      const userRole = parseInt(data.rol, 10);
-
-      if (data.rol && data.idOperario && data.nombre) {
-        const userData = {
-          nombre: data.nombre,
-          rol: userRole,
-          idOperario: data.idOperario
-        };
-
-        localStorage.setItem("user", JSON.stringify(userData));
-        console.log("🗄️ Usuario guardado en localStorage:", userData);
-      } else {
-        console.error("⚠️ Faltan datos necesarios del backend:", data);
+      if (!data.rol || !data.idOperario || !data.nombre) {
+        console.error("⚠️ Respuesta incompleta del backend:", data);
+        errorMessage.value = "❌ Error en la autenticación.";
+        return;
       }
+
+      console.log("✅ Inicio de sesión exitoso:", data);
+
+      const userRole = parseInt(data.rol, 10);
+      const userData = {
+        nombre: data.nombre,
+        rol: userRole,
+        idOperario: data.idOperario,
+      };
+
+      localStorage.setItem("user", JSON.stringify(userData));
+      console.log("🗄️ Usuario guardado en localStorage:", userData);
 
       switch (userRole) {
         case 1:
@@ -105,16 +107,17 @@ const validateForm = async () => {
           router.push("/dashboard");
           break;
         default:
+          console.warn("⚠️ Rol no permitido:", userRole);
+          errorMessage.value = "❌ No tienes acceso.";
           router.push("/403");
       }
     } else {
+      console.error("❌ Error en la respuesta del servidor:", data);
       errorMessage.value = data.message || "❌ Usuario o contraseña incorrectos.";
-      router.push("/403");
     }
   } catch (error) {
-    console.error("⚠️ Error al autenticar:", error);
+    console.error("⚠️ Error de conexión:", error);
     errorMessage.value = "⚠️ Error de conexión con el servidor.";
-    router.push("/403");
   }
 };
 
@@ -122,7 +125,6 @@ const goToForgotPassword = () => {
   router.push("/login-olvidar-contra");
 };
 </script>
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
