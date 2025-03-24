@@ -1,9 +1,10 @@
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
 export default defineConfig({
-  server: {
-    host: true,
-    strictPort: true,
-  },
-  preview: {
-    allowedHosts: ["cramirezsac.onrender.com"], // Agrega tu dominio aquí
-  },
-});
+  plugins: [vue()],
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true
+  }
+})
