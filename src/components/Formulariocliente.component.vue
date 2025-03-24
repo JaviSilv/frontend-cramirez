@@ -3,21 +3,16 @@
     <BarraLateralDashboard />
     <div class="main-content">
       <BarraSuperiorDashboard />
-
   <div class="container">
-
-    <!-- FORMULARIO DATOS PERSONALES -->
     <!-- FORMULARIO DATOS PERSONALES -->
     <h2 class="tituloformulario">Formulario de Registro</h2>
 
     <div class="formulario-all">
       <form @submit.prevent="formularioClientevarios">
         <h3>Datos Personales</h3>
-
         <!-- NOMBRE-APELLIDO -->
         <label>Apellido y Nombre:</label>
         <input v-model="form.nombreCliente" type="text"  />
-
 
         <label>Ocupacion:</label>
         <select v-model="form.ocupacionCliente">
@@ -3115,7 +3110,6 @@ watch(() => form.value.copropietarios[0]?.conyuge.departamentoCopropietariosCony
 /* BACKGROUND */
 .container {
   height: 100vh;
-
   background-image: url("@/assets/imagenes/FondoDashboard.jpg");
   background-size: cover;
   background-position: center;
@@ -3125,13 +3119,6 @@ watch(() => form.value.copropietarios[0]?.conyuge.departamentoCopropietariosCony
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #f4f4f4;
 }
 .nav-buttons button {
   margin: 5px;
@@ -3145,8 +3132,6 @@ watch(() => form.value.copropietarios[0]?.conyuge.departamentoCopropietariosCony
 .nav-buttons button:hover {
   background-color: #0056b3;
 }
-
-
 .user-icon img {
   height: 40px;
   width: 40px;
@@ -3162,16 +3147,13 @@ watch(() => form.value.copropietarios[0]?.conyuge.departamentoCopropietariosCony
   text-align: center;
 
 }
-
-
 /*STYLE FORMULARIO 1*/
 .formulario-all{
-
   background-color: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
+  max-width: 4000px; /* Aumenta el ancho */
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -3204,9 +3186,6 @@ input, select {
   border-radius: 5px;
   font-size: 16px;
 }
-
-
-
 button {
   background-color: #007bff;
   color: white;
@@ -3218,8 +3197,6 @@ button {
 h3{
   text-align: center;
 }
-
-
 /* FORMULARIO 2  */
 .overlay {
   position: fixed;
@@ -3235,7 +3212,6 @@ h3{
   backdrop-filter: blur(5px); /* Efecto de desenfoque */
   animation: fade-in 0.3s ease-in-out;
 }
-
 /* 🔹 CONTENEDOR DEL MODAL 🔹 */
 .modal {
   background: white;

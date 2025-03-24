@@ -24,7 +24,6 @@
           </button>
 
           <!-- Resultado de búsqueda con los datos -->
-          <!-- Resultado de búsqueda con los datos -->
           <transition name="fade">
             <div v-if="cliente.nombres" class="result">
               <div class="result-item">
@@ -159,7 +158,18 @@ export default {
   margin-top: 150px; /* O más, según sea necesario */
   margin-left: 500px; /* Aumenta o disminuye según necesites */
 }
+@media (max-width: 768px) {
+  .content-container {
+    width: 100%;
+    padding: 4px;
+  }
 
+  .content {
+    width: 90%;
+    padding: 20px;
+    margin-top: 50px; /* Reduce margen en móviles */
+  }
+}
 .input-container {
   margin-top: 20px;
 }
@@ -184,18 +194,19 @@ input[type="text"]:focus {
   padding: 20px;
   border-radius: 8px;
   font-size: 16px;
-  text-align: left;
-  width: 100%;
-  color: #333; /* Texto oscuro para contraste */
+  text-align: center; /* Alineación centrada */
+  max-width: 90%; /* Evita que se expanda demasiado */
+  margin: auto; /* Centrado automático */
+  color: #333; /* Texto oscuro */
 }
 
 .result-item {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Centra los elementos */
   align-items: center;
   margin-bottom: 10px;
   padding-bottom: 5px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); /* Línea separadora más sutil */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .result-item:last-child {
@@ -203,17 +214,17 @@ input[type="text"]:focus {
   border-bottom: none;
 }
 
-.result strong {
+.result-item strong {
   font-size: 16px;
   font-weight: bold;
-  flex: 1; /* Ajusta el ancho automáticamente */
-  color: #E67E22; /* Naranja más fuerte para los títulos */
+  color: #E67E22; /* Naranja fuerte */
+  text-align: left;
+  width: 50%;
 }
-
-.result span {
+.result-item span {
   font-size: 16px;
   text-align: right;
-  flex: 1;
+  width: 50%;
 }
 button {
   background: linear-gradient(135deg, #FFA500, #E67E22); /* Naranja vibrante */
