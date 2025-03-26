@@ -13,7 +13,7 @@ export default defineConfig({
     host: true,
     port: 10000,
     allowedHosts: [
-      'cramirezsac.onrender.com',
+      '104.248.115.32:8080',
       'localhost'
     ]
   },
