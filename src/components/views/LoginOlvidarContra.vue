@@ -29,7 +29,7 @@ const sendRecoveryEmail = async () => {
   if (!email.value) return;
 
   try {
-    const response = await fetch("https://104.248.115.32:8080/api/auth/forgot-password", {
+    const response = await fetch("http://104.248.115.32:8080/api/auth/forgot-password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email.value }),

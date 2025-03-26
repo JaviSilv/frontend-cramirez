@@ -85,7 +85,7 @@ export default {
         return;
       }
 
-      fetch(`https://104.248.115.32:8080/api/buscarCliente/${this.dni}`)
+      fetch(`http://104.248.115.32:8080/api/buscarCliente/${this.dni}`)
           .then(response => response.json())
           .then(data => {
             if (data.nombres) {
