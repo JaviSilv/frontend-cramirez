@@ -64,7 +64,7 @@ export default {
   methods: {
     async obtenerClientes() {
       try {
-        const response = await axios.get("http://104.248.115.32/api/clientes");
+        const response = await axios.get("http://104.248.115.32:8080/api/clientes");
         this.clientes = response.data;
       } catch (error) {
         console.error("Error al obtener clientes:", error);

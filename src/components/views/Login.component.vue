@@ -63,14 +63,17 @@ const validateForm = async () => {
     errorMessage.value = "⚠️ Todos los campos son obligatorios.";
     return;
   }
-  const response = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      usuario: username.value,
-      contrasena: password.value,
-    }),
-  });
+
+  try {
+    const response = await fetch("http://104.248.115.32:8080/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        usuario: username.value,
+        contrasena: password.value,
+      }),
+    });
+
     const data = await response.json();
     console.log("📡 Respuesta del backend:", data);
 
