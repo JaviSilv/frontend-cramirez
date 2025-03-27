@@ -24,8 +24,6 @@ const showErrors = ref(false);
 const isLoading = ref(false);
 const router = useRouter();
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backendcramirez.onrender.com";
-
 const sendRecoveryEmail = async () => {
   showErrors.value = true;
   if (!email.value) return;
@@ -33,7 +31,7 @@ const sendRecoveryEmail = async () => {
   isLoading.value = true;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
+    const response = await fetch(`https://backendcramirez.onrender.com/api/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email.value }),

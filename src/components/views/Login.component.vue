@@ -55,8 +55,6 @@ const showErrors = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backendcramirez.onrender.com";
-
 const validateForm = async () => {
   showErrors.value = true;
   errorMessage.value = "";
@@ -67,7 +65,7 @@ const validateForm = async () => {
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await fetch(`https://backendcramirez.onrender.com/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
