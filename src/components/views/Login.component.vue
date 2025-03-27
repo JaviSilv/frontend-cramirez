@@ -44,8 +44,7 @@
       </div>
     </div>
   </div>
-</template>
-<script setup>
+</template><script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -65,7 +64,7 @@ const validateForm = async () => {
   }
 
   try {
-    const response = await fetch(`https://backendcramirez.onrender.com/api/auth/login`, {
+    const response = await fetch("https://backendcramirez.onrender.com/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -78,8 +77,8 @@ const validateForm = async () => {
     console.log("📡 Respuesta del backend:", data);
 
     if (!response.ok) {
-      console.error("❌ Error en la respuesta del servidor:", data);
-      errorMessage.value = data.message || "❌ Usuario o contraseña incorrectos.";
+      console.error("❌ Error HTTP:", response.status, data);
+      errorMessage.value = data.message || `❌ Error ${response.status}: Usuario o contraseña incorrectos.`;
       return;
     }
 
@@ -89,17 +88,27 @@ const validateForm = async () => {
       return;
     }
 
-    console.log("✅ Inicio de sesión exitoso:", data);
+    const userRole = Number(data.rol);
+    if (isNaN(userRole)) {
+      console.error("⚠️ Rol inválido:", data.rol);
+      errorMessage.value = "❌ Rol de usuario inválido.";
+      return;
+    }
 
-    const userRole = parseInt(data.rol, 10);
     const userData = {
       nombre: data.nombre,
       rol: userRole,
       idOperario: data.idOperario,
     };
 
-    localStorage.setItem("user", JSON.stringify(userData));
-    console.log("🗄️ Usuario guardado en localStorage:", userData);
+    if (userRole && userData.nombre && userData.idOperario) {
+      localStorage.setItem("user", JSON.stringify(userData));
+      console.log("✅ Usuario guardado en localStorage:", userData);
+    } else {
+      console.error("⚠️ Error: datos de usuario incompletos", userData);
+      errorMessage.value = "❌ Datos de usuario incompletos.";
+      return;
+    }
 
     if ([1, 2, 3].includes(userRole)) {
       router.push("/dashboard");
