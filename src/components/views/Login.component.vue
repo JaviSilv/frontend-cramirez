@@ -55,6 +55,8 @@ const showErrors = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backendcramirez.onrender.com";
+
 const validateForm = async () => {
   showErrors.value = true;
   errorMessage.value = "";
@@ -65,7 +67,7 @@ const validateForm = async () => {
   }
 
   try {
-    const response = await fetch("/api/auth/login", {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -77,39 +79,36 @@ const validateForm = async () => {
     const data = await response.json();
     console.log("📡 Respuesta del backend:", data);
 
-    if (response.ok) {
-      if (!data.rol || !data.idOperario || !data.nombre) {
-        console.error("⚠️ Respuesta incompleta del backend:", data);
-        errorMessage.value = "❌ Error en la autenticación.";
-        return;
-      }
-
-      console.log("✅ Inicio de sesión exitoso:", data);
-
-      const userRole = parseInt(data.rol, 10);
-      const userData = {
-        nombre: data.nombre,
-        rol: userRole,
-        idOperario: data.idOperario,
-      };
-
-      localStorage.setItem("user", JSON.stringify(userData));
-      console.log("🗄️ Usuario guardado en localStorage:", userData);
-
-      switch (userRole) {
-        case 1:
-        case 2:
-        case 3:
-          router.push("/dashboard");
-          break;
-        default:
-          console.warn("⚠️ Rol no permitido:", userRole);
-          errorMessage.value = "❌ No tienes acceso.";
-          router.push("/403");
-      }
-    } else {
+    if (!response.ok) {
       console.error("❌ Error en la respuesta del servidor:", data);
       errorMessage.value = data.message || "❌ Usuario o contraseña incorrectos.";
+      return;
+    }
+
+    if (!data.rol || !data.idOperario || !data.nombre) {
+      console.error("⚠️ Respuesta incompleta del backend:", data);
+      errorMessage.value = "❌ Error en la autenticación.";
+      return;
+    }
+
+    console.log("✅ Inicio de sesión exitoso:", data);
+
+    const userRole = parseInt(data.rol, 10);
+    const userData = {
+      nombre: data.nombre,
+      rol: userRole,
+      idOperario: data.idOperario,
+    };
+
+    localStorage.setItem("user", JSON.stringify(userData));
+    console.log("🗄️ Usuario guardado en localStorage:", userData);
+
+    if ([1, 2, 3].includes(userRole)) {
+      router.push("/dashboard");
+    } else {
+      console.warn("⚠️ Rol no permitido:", userRole);
+      errorMessage.value = "❌ No tienes acceso.";
+      router.push("/403");
     }
   } catch (error) {
     console.error("⚠️ Error de conexión:", error);

@@ -15,39 +15,47 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const email = ref("");
 const showErrors = ref(false);
+const isLoading = ref(false);
 const router = useRouter();
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://backendcramirez.onrender.com";
 
 const sendRecoveryEmail = async () => {
   showErrors.value = true;
   if (!email.value) return;
 
+  isLoading.value = true;
+
   try {
-    const response = await fetch("/api/auth/forgot-password", {
+    const response = await fetch(`${API_BASE_URL}/api/auth/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email.value }),
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      alert("Se ha enviado un correo con instrucciones.");
+      alert("✅ Se ha enviado un correo con instrucciones.");
+      router.push("/login"); // Redirige al login después de enviar el correo
     } else {
-      const errorData = await response.json();
-      alert(errorData.message || "Error al enviar el correo.");
+      console.error("❌ Error en la respuesta:", data);
+      alert(data.message || "❌ Error al enviar el correo.");
     }
   } catch (error) {
-    console.error("Error en recuperación:", error);
-    alert("Hubo un problema con la solicitud. Inténtelo de nuevo.");
+    console.error("⚠️ Error de conexión:", error);
+    alert("⚠️ Hubo un problema con la solicitud. Inténtelo de nuevo.");
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
 

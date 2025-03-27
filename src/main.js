@@ -4,9 +4,15 @@ import router from "@/routes.js";
 
 const app = createApp(App);
 
-if (import.meta.env.MODE === 'production') {
-    app.config.globalProperties.$devtools = false;
+// Solo habilitar Devtools en desarrollo (no es necesario deshabilitar en producción)
+if (!import.meta.env.PROD) {
+    console.log("🔧 Modo desarrollo: DevTools habilitadas");
 }
 
-app.use(router);
-app.mount('#app');
+try {
+    app.use(router);
+    app.mount('#app');
+    console.log("🚀 Aplicación montada correctamente");
+} catch (error) {
+    console.error("❌ Error al montar la aplicación:", error);
+}

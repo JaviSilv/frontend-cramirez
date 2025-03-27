@@ -12,19 +12,16 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://104.248.115.32:8080', // URL de tu backend
+        target: 'https://backendcramirez.onrender.com', // Backend en Render
         changeOrigin: true,
-        secure: false // Desactiva SSL si el backend está en HTTP
+        secure: true // Render usa HTTPS, por lo que debe ser `true`
       }
     }
   },
   preview: {
     host: true,
     port: 10000,
-    allowedHosts: [
-      '104.248.115.32:8080',
-      'localhost'
-    ]
+    allowedHosts: ['localhost']
   },
   build: {
     outDir: 'dist',
