@@ -117,7 +117,7 @@ export default {
     async generarWord(contrato) {
       try {
         // Cargar la plantilla desde la carpeta `public`
-        const response = await fetch("/api/auth/login");
+        const response = await fetch("https://backendcramirez.onrender.com/api/auth/login");
         if (!response.ok) throw new Error("No se pudo cargar la plantilla");
 
         const blob = await response.blob();

@@ -85,7 +85,7 @@ export default {
         return;
       }
 
-      fetch(`/api/auth/login`)
+      fetch(`https://backendcramirez.onrender.com/api/auth/login`)
           .then(response => response.json())
           .then(data => {
             if (data.nombres) {
