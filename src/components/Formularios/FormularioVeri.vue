@@ -85,7 +85,7 @@ export default {
         return;
       }
 
-      fetch(`https://backendcramirez.onrender.com/api/buscarCliente/${this.dni}`)
+      fetch(`/api/auth/login`)
           .then(response => response.json())
           .then(data => {
             if (data.nombres) {

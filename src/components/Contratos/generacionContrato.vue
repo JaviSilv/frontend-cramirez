@@ -117,7 +117,7 @@ export default {
     async generarWord(contrato) {
       try {
         // Cargar la plantilla desde la carpeta `public`
-        const response = await fetch("/PLANTILLA_MODIFICADA_MINUTA_T1.docx");
+        const response = await fetch("/api/auth/login");
         if (!response.ok) throw new Error("No se pudo cargar la plantilla");
 
         const blob = await response.blob();

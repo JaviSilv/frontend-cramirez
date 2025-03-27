@@ -612,7 +612,7 @@ const formularioClientevarios = async () => {
 
     console.log("Datos del Cliente a enviar:", clientePayload);
 
-    await axios.post("https://backendcramirez.onrender.com/api/clientes", clientePayload, {
+    await axios.post("http://104.248.115.32/api/clientes", clientePayload, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -620,7 +620,7 @@ const formularioClientevarios = async () => {
       },
     });
 
-    const response = await axios.get("https://backendcramirez.onrender.com/api/clientes/ultimo");
+    const response = await axios.get("http://104.248.115.32/api/clientes/ultimo");
     idCliente.value = response.data;
     console.log("ID del cliente asignado:", idCliente.value);
 
@@ -644,7 +644,7 @@ const formularioClientevarios = async () => {
 
       console.log("Datos del Cónyuge a enviar:", conyugePayload);
 
-      await axios.post("https://backendcramirez.onrender.com/api/clienteConyuges", conyugePayload, {
+      await axios.post("http://104.248.115.32/api/clienteConyuges", conyugePayload, {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
@@ -770,7 +770,7 @@ const submitForm2 = async () => {
         };
 
         requests.push(
-            axios.post("https://backendcramirez.onrender.com/api/copropietario", copropietarioPayload, {
+            axios.post("http://104.248.115.32/api/copropietario", copropietarioPayload, {
               withCredentials: true,
               headers: {
                 "Content-Type": "application/json",
@@ -797,7 +797,7 @@ const submitForm2 = async () => {
             celularCopropietarioConyuge: copropietario.conyuge.numTelefonicoCopropietariosConyuge,
           };
           requests.push(
-              axios.post("https://backendcramirez.onrender.com/api/copropietarioconyuge", copropietarioconyugePayload, {
+              axios.post("http://104.248.115.32/api/copropietarioconyuge", copropietarioconyugePayload, {
                 withCredentials: true,
                 headers: {
                   "Content-Type": "application/json",
@@ -824,7 +824,7 @@ const submitForm2 = async () => {
           urbanizacion: lote.urbanizacionLote,
         };
 
-        await axios.post("https://backendcramirez.onrender.com/api/lotes", lotePayload, {
+        await axios.post("http://104.248.115.32/api/lotes", lotePayload, {
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
@@ -833,7 +833,7 @@ const submitForm2 = async () => {
         });
 
         // Obtener el último ID de lote registrado desde el backend
-        const { data: idLote } = await axios.get("https://backendcramirez.onrender.com/api/lotes/ultimo");
+        const { data: idLote } = await axios.get("http://104.248.115.32/api/lotes/ultimo");
 
         // Almacenar el idLote en el objeto del lote
         lote.idLote = idLote;
@@ -866,7 +866,7 @@ const finalizarRegistroDetalleLote = async () => {
         mantenimientoMensualLote: lote.mantenimientoMensual,
       };
 
-      return axios.post('https://backendcramirez.onrender.com/api/detallesLote', detallesLoteDTO);
+      return axios.post('http://104.248.115.32/api/detallesLote', detallesLoteDTO);
     });
 
     await Promise.all(requests);

@@ -63,17 +63,14 @@ const validateForm = async () => {
     errorMessage.value = "⚠️ Todos los campos son obligatorios.";
     return;
   }
-
-  try {
-    const response = await fetch("https://backendcramirez.onrender.com/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        usuario: username.value,
-        contrasena: password.value,
-      }),
-    });
-
+  const response = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      usuario: username.value,
+      contrasena: password.value,
+    }),
+  });
     const data = await response.json();
     console.log("📡 Respuesta del backend:", data);
 
