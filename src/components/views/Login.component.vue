@@ -47,6 +47,9 @@
 </template><script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { Chart, Filler } from "chart.js";
+
+Chart.register(Filler);
 
 const username = ref("");
 const password = ref("");
@@ -73,17 +76,31 @@ const validateForm = async () => {
       }),
     });
 
-    const data = await response.json();
-    console.log("📡 Respuesta del backend:", data);
-
-    if (!response.ok) {
-      console.error("❌ Error HTTP:", response.status, data);
-      errorMessage.value = data.message || `❌ Error ${response.status}: Usuario o contraseña incorrectos.`;
+    let data;
+    try {
+      data = await response.json();
+      console.log("📡 Respuesta del backend:", data);
+    } catch (jsonError) {
+      console.error("❌ Error al parsear JSON:", jsonError);
+      errorMessage.value = "❌ Error en la respuesta del servidor.";
       return;
     }
 
-    if (!data.rol || !data.idOperario || !data.nombre) {
-      console.error("⚠️ Respuesta incompleta del backend:", data);
+    if (!response.ok) {
+      console.error("❌ Error HTTP:", response.status, data);
+      errorMessage.value = data?.message || `❌ Error ${response.status}: Usuario o contraseña incorrectos.`;
+      return;
+    }
+
+    if (!data || typeof data !== "object") {
+      console.error("⚠️ Respuesta inválida del backend:", data);
+      errorMessage.value = "❌ Respuesta inválida del servidor.";
+      return;
+    }
+
+    // Validar que data.rol existe y es un número válido
+    if (!("rol" in data) || data.rol === null || data.rol === undefined) {
+      console.error("⚠️ Respuesta sin rol:", data);
       errorMessage.value = "❌ Error en la autenticación.";
       return;
     }
@@ -95,21 +112,23 @@ const validateForm = async () => {
       return;
     }
 
+    if (!data.idOperario || !data.nombre) {
+      console.error("⚠️ Respuesta incompleta del backend:", data);
+      errorMessage.value = "❌ Datos de usuario incompletos.";
+      return;
+    }
+
+    // Guardar usuario en localStorage
     const userData = {
       nombre: data.nombre,
       rol: userRole,
       idOperario: data.idOperario,
     };
 
-    if (userRole && userData.nombre && userData.idOperario) {
-      localStorage.setItem("user", JSON.stringify(userData));
-      console.log("✅ Usuario guardado en localStorage:", userData);
-    } else {
-      console.error("⚠️ Error: datos de usuario incompletos", userData);
-      errorMessage.value = "❌ Datos de usuario incompletos.";
-      return;
-    }
+    localStorage.setItem("user", JSON.stringify(userData));
+    console.log("✅ Usuario guardado en localStorage:", userData);
 
+    // Redirigir según el rol del usuario
     if ([1, 2, 3].includes(userRole)) {
       router.push("/dashboard");
     } else {
@@ -127,6 +146,7 @@ const goToForgotPassword = () => {
   router.push("/login-olvidar-contra");
 };
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
