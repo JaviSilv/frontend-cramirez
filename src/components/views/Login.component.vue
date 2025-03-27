@@ -31,9 +31,7 @@
           <label for="remember">Recordarme</label>
         </div>
 
-        <button @click="validateForm">
-          INGRESAR
-        </button>
+        <button @click="validateForm"> INGRESAR </button>
 
         <p>
           <a href="#" class="forgot-password" @click.prevent="goToForgotPassword">
@@ -41,15 +39,17 @@
           </a>
         </p>
 
+        <p v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </p>
       </div>
     </div>
   </div>
-</template><script setup>
+</template>
+
+<script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { Chart, Filler } from "chart.js";
-
-Chart.register(Filler);
 
 const username = ref("");
 const password = ref("");
@@ -67,6 +67,7 @@ const validateForm = async () => {
   }
 
   try {
+    console.log("📡 Enviando solicitud al backend...");
     const response = await fetch("https://backendcramirez.onrender.com/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -98,7 +99,6 @@ const validateForm = async () => {
       return;
     }
 
-    // Validar que data.rol existe y es un número válido
     if (!("rol" in data) || data.rol === null || data.rol === undefined) {
       console.error("⚠️ Respuesta sin rol:", data);
       errorMessage.value = "❌ Error en la autenticación.";
@@ -128,9 +128,18 @@ const validateForm = async () => {
     localStorage.setItem("user", JSON.stringify(userData));
     console.log("✅ Usuario guardado en localStorage:", userData);
 
+    // Verificar si la ruta /dashboard existe en Vue Router
+    const routeExists = router.getRoutes().some(route => route.path === "/dashboard");
+    if (!routeExists) {
+      console.error("🚨 La ruta /dashboard no está definida en Vue Router.");
+      errorMessage.value = "🚨 Error interno: Ruta no encontrada.";
+      return;
+    }
+
     // Redirigir según el rol del usuario
     if ([1, 2, 3].includes(userRole)) {
-      router.push("/dashboard");
+      console.log("✅ Redirigiendo al dashboard...");
+      router.push("/dashboard").catch(err => console.error("❌ Error en la redirección:", err));
     } else {
       console.warn("⚠️ Rol no permitido:", userRole);
       errorMessage.value = "❌ No tienes acceso.";
@@ -146,8 +155,6 @@ const goToForgotPassword = () => {
   router.push("/login-olvidar-contra");
 };
 </script>
-
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
 
