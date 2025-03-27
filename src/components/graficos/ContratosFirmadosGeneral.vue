@@ -7,7 +7,7 @@
 
 <script>
 import { onMounted, onUnmounted, ref } from "vue";
-import { Chart, BarController, BarElement, CategoryScale, LinearScale } from "chart.js";
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Filler } from "chart.js";
 
 export default {
   setup() {
@@ -16,9 +16,14 @@ export default {
 
     onMounted(() => {
       console.log("Componente montado, inicializando gráfico...");
-      Chart.register(BarController, BarElement, CategoryScale, LinearScale);
+      Chart.register(BarController, BarElement, CategoryScale, LinearScale, Filler);
 
-      chartInstance.value = new Chart(chartCanvas.value, {
+      if (!chartCanvas.value) {
+        console.error("❌ No se encontró el canvas para el gráfico");
+        return;
+      }
+
+      chartInstance.value = new Chart(chartCanvas.value.getContext("2d"), {
         type: "bar",
         data: {
           labels: ["Firmados", "No Firmados", "Legales"],
@@ -27,6 +32,7 @@ export default {
               label: "Total Contratos",
               data: [10, 20, 10],
               backgroundColor: ["#36a2eb", "#ff6384", "#ffce56"],
+              fill: true,
             },
           ],
         },
