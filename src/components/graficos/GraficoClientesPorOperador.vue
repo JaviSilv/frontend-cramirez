@@ -35,7 +35,7 @@ export default {
       chartInstance.value = new Chart(chartCanvas.value.getContext("2d"), {
         type: "line",
         data: {
-          labels: ["Javier", "Maria", "Carlos", "Ana", "Luis", "Pedro"],
+          labels: ["Javier", "Carlos", "Ana", "Luis", "Pedro"],
           datasets: [
             {
               label: `Clientes ingresados (${selectedDate.value})`,
