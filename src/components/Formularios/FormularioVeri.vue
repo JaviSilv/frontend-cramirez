@@ -84,8 +84,7 @@ export default {
         this.cliente = {}; // Limpia los datos si el DNI no es válido aún
         return;
       }
-
-      fetch(`https://backendcramirez.onrender.com/api/auth/login`)
+      fetch(`https://backendcramirez.onrender.com/api/buscarCliente/${this.dni}`)
           .then(response => response.json())
           .then(data => {
             if (data.nombres) {
