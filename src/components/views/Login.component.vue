@@ -31,9 +31,7 @@
           <label for="remember">Recordarme</label>
         </div>
 
-        <button @click="validateForm">
-          INGRESAR
-        </button>
+        <button @click="validateForm"> INGRESAR </button>
 
         <p>
           <a href="#" class="forgot-password" @click.prevent="goToForgotPassword">
@@ -41,14 +39,14 @@
           </a>
         </p>
 
-      </div>
-
-      <div class="welcome-text">
-        <p>BIENVENIDO A CRAMIREZSAC</p>
+        <p v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </p>
       </div>
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -69,7 +67,8 @@ const validateForm = async () => {
   }
 
   try {
-    const response = await fetch("https://backendcramirez.onrender.com/api/auth/login"  , {
+    console.log("📡 Enviando solicitud al backend...");
+    const response = await fetch("https://backendcramirez.onrender.com/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -78,43 +77,77 @@ const validateForm = async () => {
       }),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+      console.log("📡 Respuesta del backend:", data);
+    } catch (jsonError) {
+      console.error("❌ Error al parsear JSON:", jsonError);
+      errorMessage.value = "❌ Error en la respuesta del servidor.";
+      return;
+    }
 
+    if (!response.ok) {
+      console.error("❌ Error HTTP:", response.status, data);
+      errorMessage.value = data?.message || `❌ Error ${response.status}: Usuario o contraseña incorrectos.`;
+      return;
+    }
 
-    if (response.ok) {
-      console.log("✅ Inicio de sesión exitoso:", data);
-      const userRole = parseInt(data.rol, 10);
+    if (!data || typeof data !== "object") {
+      console.error("⚠️ Respuesta inválida del backend:", data);
+      errorMessage.value = "❌ Respuesta inválida del servidor.";
+      return;
+    }
 
-      if (data.rol && data.idOperario && data.nombre) {
-        const userData = {
-          nombre: data.nombre,
-          rol: userRole,
-          idOperario: data.idOperario
-        };
+    if (!("rol" in data) || data.rol === null || data.rol === undefined) {
+      console.error("⚠️ Respuesta sin rol:", data);
+      errorMessage.value = "❌ Error en la autenticación.";
+      return;
+    }
 
-        localStorage.setItem("user", JSON.stringify(userData));
-        console.log("🗄️ Usuario guardado en localStorage:", userData);
-      } else {
-        console.error("⚠️ Faltan datos necesarios del backend:", data);
-      }
+    const userRole = Number(data.rol);
+    if (isNaN(userRole)) {
+      console.error("⚠️ Rol inválido:", data.rol);
+      errorMessage.value = "❌ Rol de usuario inválido.";
+      return;
+    }
 
-      switch (userRole) {
-        case 1:
-        case 2:
-        case 3:
-          router.push("/dashboard");
-          break;
-        default:
-          router.push("/403");
-      }
+    if (!data.idOperario || !data.nombre) {
+      console.error("⚠️ Respuesta incompleta del backend:", data);
+      errorMessage.value = "❌ Datos de usuario incompletos.";
+      return;
+    }
+
+    // Guardar usuario en localStorage
+    const userData = {
+      nombre: data.nombre,
+      rol: userRole,
+      idOperario: data.idOperario,
+    };
+
+    localStorage.setItem("user", JSON.stringify(userData));
+    console.log("✅ Usuario guardado en localStorage:", userData);
+
+    // Verificar si la ruta /dashboard existe en Vue Router
+    const routeExists = router.getRoutes().some(route => route.path === "/dashboard");
+    if (!routeExists) {
+      console.error("🚨 La ruta /dashboard no está definida en Vue Router.");
+      errorMessage.value = "🚨 Error interno: Ruta no encontrada.";
+      return;
+    }
+
+    // Redirigir según el rol del usuario
+    if ([1, 2, 3].includes(userRole)) {
+      console.log("✅ Redirigiendo al dashboard...");
+      router.push("/dashboard").catch(err => console.error("❌ Error en la redirección:", err));
     } else {
-      errorMessage.value = data.message || "❌ Usuario o contraseña incorrectos.";
+      console.warn("⚠️ Rol no permitido:", userRole);
+      errorMessage.value = "❌ No tienes acceso.";
       router.push("/403");
     }
   } catch (error) {
-    console.error("⚠️ Error al autenticar:", error);
+    console.error("⚠️ Error de conexión:", error);
     errorMessage.value = "⚠️ Error de conexión con el servidor.";
-    router.push("/403");
   }
 };
 
@@ -122,7 +155,6 @@ const goToForgotPassword = () => {
   router.push("/login-olvidar-contra");
 };
 </script>
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
@@ -140,7 +172,7 @@ const goToForgotPassword = () => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("@/assets/Imagenes/FondoDashboard.jpg");
+  background-image: url("@/assets/imagenes/FondoDashboard.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
