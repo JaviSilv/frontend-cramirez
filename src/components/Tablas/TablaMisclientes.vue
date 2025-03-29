@@ -1,6 +1,8 @@
 <template>
-  <div class="tabla-mis-clientes">
-    <h2>Tabla Mis Clientes</h2>
+  <div>
+    <h1>Dashboard de Clientes</h1>
+    <button @click="exportarExcel" class="export-button">Exportar a Excel</button>
+
     <div class="table-container">
       <table>
         <thead>
@@ -51,6 +53,7 @@
 <script>
 import "@/assets/Tablas/Tablas.css";
 import axios from "axios";
+import * as XLSX from "xlsx";
 
 export default {
   data() {
@@ -64,12 +67,54 @@ export default {
   methods: {
     async obtenerClientes() {
       try {
-        const response = await axios.get("https://backendcramirez.onrender.com/api/clientes");
+        const userData = JSON.parse(localStorage.getItem("user"));
+        const idOperario = userData ? userData.idOperario : null;
+        console.log("ID Operario enviado en la solicitud:", idOperario);
+
+        if (!idOperario) {
+          console.error("No se encontró 'idOperario' en localStorage.");
+          return;
+        }
+
+        const response = await axios.get(
+            "https://backendcramirez.onrender.com/api/clientes/operario",
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "X-User-ID": idOperario,
+              },
+              withCredentials: true,
+            }
+        );
+
+        console.log("Clientes recibidos:", response.data);
         this.clientes = response.data;
       } catch (error) {
         console.error("Error al obtener clientes:", error);
       }
     },
+    exportarExcel() {
+      const ws = XLSX.utils.json_to_sheet(this.clientes);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Clientes");
+      XLSX.writeFile(wb, "Clientes.xlsx");
+    },
   },
 };
 </script>
+<style scoped>
+.export-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+}
+
+.export-button:hover {
+  background-color: #45a049;
+}
+</style>

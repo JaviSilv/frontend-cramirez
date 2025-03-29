@@ -12,7 +12,7 @@
             <input
                 type="text"
                 v-model="dni"
-                placeholder="Ingresar Número RENIEC"
+                placeholder=" Ingresar Número RENIEC"
                 @input="buscarCliente"
                 maxlength="8"
             />
