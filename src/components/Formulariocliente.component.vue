@@ -14,7 +14,7 @@
         <label>Apellido y Nombre:</label>
         <input v-model="form.nombreCliente" type="text"  />
 
-        <label>Ocupacion:</label>
+        <label>Ocupación:</label>
         <select v-model="form.ocupacionCliente">
           <option :value="1">Empleado</option>
           <option :value="2">Independiente</option>
