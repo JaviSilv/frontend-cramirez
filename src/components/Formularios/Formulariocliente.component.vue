@@ -1093,7 +1093,7 @@ const obtenerNombreProyecto = (id) => {
 /* BACKGROUND */
 
 .container {
-  background-image: url("@/assets/Imagenes/FondoDashboard.jpg");
+  background-image: url("@/assets/imagenes/FondoDashboard.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
