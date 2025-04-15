@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { Chart, LineController, LineElement, PointElement, CategoryScale, LinearScale } from "chart.js";
+import { Chart, LineController, LineElement, PointElement, CategoryScale, LinearScale ,Filler } from "chart.js";
 
 export default {
   data() {
@@ -31,7 +31,7 @@ export default {
   methods: {
     createChart() {
       if (this.chart) this.chart.destroy();
-      Chart.register(LineController, LineElement, PointElement, CategoryScale, LinearScale);
+      Chart.register(LineController, LineElement, PointElement, CategoryScale, LinearScale,Filler);
       this.chart = new Chart(this.$refs.chart, {
         type: "line",
         data: {

@@ -7,6 +7,7 @@
       </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -25,21 +26,22 @@ export default {
 <style scoped>
 .dashboard-container {
   display: flex;
+  height: 100vh; /* importante para que ocupe toda la pantalla */
+  overflow: hidden;
 }
 
 .main-content {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  height: 100vh; /* para que herede el tamaño total de viewport */
 }
 
 .area-trabajo {
-  width: 100%;
-  min-height: 500px; /* O ajusta según el contenido */
+  flex-grow: 1; /* para que ocupe todo el espacio restante debajo de la barra superior */
   padding: 20px;
   background: #f8f9fa;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
+  overflow-y: auto;
 }
+
 </style>

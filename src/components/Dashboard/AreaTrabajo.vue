@@ -29,12 +29,12 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import  { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import ContratosFirmadosPorOperador from "@/components/graficos/ContratosFirmadosPorOperador.vue";
-import GraficoClientesPorOperador from "@/components/graficos/GraficoClientesPorOperador.vue";
-import GraficoClientesGeneral from "@/components/graficos/GraficoClientesGeneral.vue";
-import ContratosFirmadosGeneral from "@/components/graficos/ContratosFirmadosGeneral.vue";
+import ContratosFirmadosPorOperador from "@/components/Graficos/ContratosFirmadosPorOperador.vue";
+import GraficoClientesPorOperador from "@/components/Graficos/GraficoClientesPorOperador.vue";
+import GraficoClientesGeneral from "@/components/Graficos/GraficoClientesGeneral.vue";
+import ContratosFirmadosGeneral from "@/components/Graficos/ContratosFirmadosGeneral.vue";
 
 export default {
   components: {
@@ -49,13 +49,14 @@ export default {
 
     onMounted(() => {
       try {
-        const storedUserRole = localStorage.getItem("userRole");
+        const userData = JSON.parse(localStorage.getItem("user"));
+        const storedUserRole = userData?.rol;
         if (storedUserRole) {
           userRole.value = parseInt(storedUserRole, 10); // 🔥 Asegurarse de que sea un número
           console.log("🎭 Rol detectado:", userRole.value);
         } else {
           console.warn("⚠️ No se detectó un rol, redirigiendo a la página de login.");
-          router.push("/login");
+          router.push("/");
         }
       } catch (error) {
         console.error("❌ Error al intentar obtener el rol del usuario:", error);
@@ -77,11 +78,12 @@ export default {
   width: 90vw;
   max-width: 1400px;
   margin: 50px auto 0 auto;
-  margin-left: 220px;
+  margin-left: 260px;
   padding: 10px;
   box-sizing: border-box;
   position: relative;
   z-index: 10;
+  overflow-y: auto;
 }
 
 .grafico-item {
@@ -89,10 +91,9 @@ export default {
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 300px;
+  height: 370px;
   width: 100%;
   max-width: 500px;
 }

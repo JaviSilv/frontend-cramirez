@@ -1,95 +1,149 @@
-/* Contenedor de la tabla */
+/* Área principal */
+.primary-container {
+    position: relative;
+    margin: 0;
+    padding: 20px 20px 0 20px; /* Espacio interior arriba y a los lados */
+    width: calc(100% - 90px); /* Resta el ancho de la barra lateral */
+    margin-left: 250px; /* Espacio para la barra lateral */
+    min-height: 100vh; /* Asegura ocupar toda la altura visible */
+    box-sizing: border-box;
+    transition: margin-left 0.3s ease;
+    overflow-y: auto; /* Scroll si el contenido sobrepasa */
+}
+
+
+/* Contenedor general del dashboard */
+.secundary-container {
+    margin: 0;
+    padding: 16px 16px 16px 0; /* Sin padding izquierdo */
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+    position: relative;
+    left: 0;
+    width: calc(100% - 150px);  /* Ajusta el "150px" al ancho de tu barra lateral */
+    margin-right: 0; /* Elimina margen derecho si no es necesario */
+    margin-top: 40px;
+}
+
+/* Filtros de búsqueda */
+.items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.buscador,
+.filtro {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-width: 200px;
+    flex: 1;
+    max-width: 300px;
+}
+
+.buscador:focus,
+.filtro:focus {
+    border-color: #f57c00;
+    outline: none;
+}
+
+/* Contenedor de tabla con scroll */
 .table-container {
+    border-radius: 10px;
+    background-color: #ffffff;
     width: 100%;
-    max-width: calc(100vw - 200px); /* Más espacio para la tabla */
-    max-height: 680px; /* Altura máxima antes de activar scroll */
-    overflow: auto; /* Scroll cuando sea necesario */
-    background: white;
-    padding: 20px;
-    margin-left: 190px; /* Menos margen lateral */
-    margin-top: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    transform: translateX(180px);
+    overflow-x: auto;  /* Permite desplazamiento horizontal */
+    overflow-y: hidden;  /* Desactiva el scroll vertical */
+    max-height: 75vh;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    scrollbar-width: auto;  /* Personaliza el tamaño del scroll */
+}
+
+/* Scroll personalizado (WebKit) */
+.table-container::-webkit-scrollbar {
+    height: 8px;  /* Tamaño del scroll horizontal */
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
 }
 
 /* Tabla */
-table {
-    width: 100%;
-    min-width: 1400px; /* Aumentado para más espacio */
-    border-collapse: separate;
-    border-spacing: 0;
-    font-family: 'Arial', sans-serif;
-    border-radius: 12px;
-    overflow: hidden;
+.table {
+    width: max-content;  /* Permite que la tabla crezca según las columnas */
+    min-width: 100%;     /* Asegura que la tabla ocupe el 100% del ancho mínimo */
+    border-collapse: collapse;
 }
 
-/* Encabezados */
-th {
-    background-color: #E67E22; /* Naranja fuerte */
+/* Cabecera sticky */
+.table thead {
+    background-color: #f57c00;
     color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 16px; /* Espaciado mayor */
-    border: 1px solid #E67E22;
-    white-space: nowrap;
-    text-align: left;
     position: sticky;
     top: 0;
-    z-index: 3;
+    z-index: 2;
 }
 
 /* Celdas */
-td {
-    padding: 16px;
-    border: 1px solid #ddd;
-    color: #333;
+.table th,
+.table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap; /* Mantiene columnas en una línea */
+    font-size: 14px;
     text-align: left;
-    white-space: nowrap;
 }
 
-/* Alternancia de colores en filas */
-tr:nth-child(even) {
-    background-color: #fdf2e9; /* Color suave naranja claro */
+/* Hover filas */
+.table tbody tr:hover {
+    background-color: #f5f5f5;
 }
 
-/* Efecto hover */
-tr:hover {
-    background-color: #fbe6d4; /* Naranja más claro */
-    transition: background-color 0.3s ease-in-out;
+/* Botón de acción */
+.btn-accion {
+    padding: 6px 12px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.3s ease;
 }
 
-/* Bordes redondeados en tabla */
-table tr:first-child th:first-child {
-    border-top-left-radius: 12px;
-}
-table tr:first-child th:last-child {
-    border-top-right-radius: 12px;
-}
-table tr:last-child td:first-child {
-    border-bottom-left-radius: 12px;
-}
-table tr:last-child td:last-child {
-    border-bottom-right-radius: 12px;
+.btn-accion:hover {
+    background-color: #43a047;
 }
 
-/* Responsividad */
-@media (max-width: 1024px) {
-    .table-container {
-        max-width: 100%;
-        margin-left: 400px;
-    }
-    table {
-        min-width: 1000px;
-    }
+.btn-editar i {
+    font-size: 14px;
 }
 
+/* Responsive para móviles */
 @media (max-width: 768px) {
-    th, td {
-        padding: 12px;
-        font-size: 14px;
+    .items {
+        flex-direction: column;
+        gap: 8px;
     }
-    th {
-        font-size: 13px;
+
+    .table-container {
+        max-height: 65vh;
+    }
+
+    /* Mantener scroll horizontal en móviles */
+    .table {
+        min-width: 800px;
     }
 }

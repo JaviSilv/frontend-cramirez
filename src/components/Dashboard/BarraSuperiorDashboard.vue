@@ -2,11 +2,11 @@
   <div class="pagina">
     <!-- Barra superior -->
     <header class="barra-superior">
-      <img src="@/assets/Imagenes/LogoCoram.png" alt="Logo" class="logo">
+      <img src="@/assets/imagenes/LogoCoram.png" alt="Logo" class="logo">
 
       <!-- Usuario con menú desplegable -->
       <div class="usuario" @click.stop="toggleMenu">
-        <img src="@/assets/Imagenes/ImgUser.png" alt="Foto de perfil" class="foto-perfil">
+        <img src="@/assets/imagenes/ImgUser.png" alt="Foto de perfil" class="foto-perfil">
         <div class="info-usuario">
           <span class="nombre">{{ usuario.nombre }}</span>
           <span class="rol">{{ usuario.rol }}</span>

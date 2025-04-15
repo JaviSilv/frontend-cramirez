@@ -4,47 +4,56 @@
       <div class="login-box">
         <h2>INICIAR SESIÓN</h2>
 
-        <label for="username">USUARIO</label>
-        <input
-            type="text"
-            id="username"
-            v-model="username"
-            placeholder="Ingrese su usuario"
-        />
-        <span v-if="showErrors && !username" class="error-message">
-          ¡Es obligatorio!
-        </span>
+        <form @submit.prevent="validateForm">
+          <div class="input-group">
+            <label for="username">USUARIO</label>
+            <input
+                type="text"
+                id="username"
+                v-model.trim="username"
+                placeholder="Ingrese su usuario"
+                aria-describedby="username-help"
+                :aria-invalid="showErrors && !username"
+            />
+            <span v-if="showErrors && !username" class="error-message" id="username-help">
+              ¡Es obligatorio!
+            </span>
+          </div>
 
-        <label for="password">CONTRASEÑA</label>
-        <input
-            type="password"
-            id="password"
-            v-model="password"
-            placeholder="Ingrese su contraseña"
-        />
-        <span v-if="showErrors && !password" class="error-message">
-          ¡Es obligatorio!
-        </span>
+          <div class="input-group">
+            <label for="password">CONTRASEÑA</label>
+            <input
+                type="password"
+                id="password"
+                v-model.trim="password"
+                placeholder="Ingrese su contraseña"
+                aria-describedby="password-help"
+                :aria-invalid="showErrors && !password"
+            />
+            <span v-if="showErrors && !password" class="error-message" id="password-help">
+              ¡Es obligatorio!
+            </span>
+          </div>
 
-        <div class="remember-me">
-          <input type="checkbox" id="remember" v-model="remember" />
-          <label for="remember">Recordarme</label>
-        </div>
+          <div class="remember-me">
+            <input type="checkbox" id="remember" v-model="remember" />
+            <label for="remember">Recordarme</label>
+          </div>
 
-        <button @click="validateForm">
-          INGRESAR
-        </button>
+          <div v-if="errorMessage" class="error-message server-error">
+            {{ errorMessage }}
+          </div>
 
-        <p>
-          <a href="#" class="forgot-password" @click.prevent="goToForgotPassword">
-            OLVIDASTE TU CONTRASEÑA
-          </a>
-        </p>
+          <button type="submit" :disabled="isLoading">
+            {{ isLoading ? 'CARGANDO...' : 'INGRESAR' }}
+          </button>
 
-      </div>
-
-      <div class="welcome-text">
-        <p>BIENVENIDO A CRAMIREZSAC</p>
+          <p>
+            <a href="#" class="forgot-password" @click.prevent="goToForgotPassword">
+              OLVIDASTE TU CONTRASEÑA
+            </a>
+          </p>
+        </form>
       </div>
     </div>
   </div>
@@ -53,25 +62,34 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+const router = useRouter();
+
+// Estados reactivos
 const username = ref("");
 const password = ref("");
+const remember = ref(false);
 const showErrors = ref(false);
 const errorMessage = ref("");
-const router = useRouter();
+const isLoading = ref(false);
 
 const validateForm = async () => {
   showErrors.value = true;
   errorMessage.value = "";
+  isLoading.value = true;
 
+  // Validación básica
   if (!username.value || !password.value) {
     errorMessage.value = "⚠️ Todos los campos son obligatorios.";
+    isLoading.value = false;
     return;
   }
 
   try {
     const response = await fetch("http://localhost:8080/api/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         usuario: username.value,
         contrasena: password.value,
@@ -80,41 +98,41 @@ const validateForm = async () => {
 
     const data = await response.json();
 
-
-    if (response.ok) {
-      console.log("✅ Inicio de sesión exitoso:", data);
-      const userRole = parseInt(data.rol, 10);
-
-      if (data.rol && data.idOperario && data.nombre) {
-        const userData = {
-          nombre: data.nombre,
-          rol: userRole,
-          idOperario: data.idOperario
-        };
-
-        localStorage.setItem("user", JSON.stringify(userData));
-        console.log("🗄️ Usuario guardado en localStorage:", userData);
-      } else {
-        console.error("⚠️ Faltan datos necesarios del backend:", data);
-      }
-
-      switch (userRole) {
-        case 1:
-        case 2:
-        case 3:
-          router.push("/dashboard");
-          break;
-        default:
-          router.push("/403");
-      }
-    } else {
-      errorMessage.value = data.message || "❌ Usuario o contraseña incorrectos.";
-      router.push("/403");
+    if (!response.ok) {
+      throw new Error(data.message || "Error en la autenticación");
     }
+
+    // Verificación de datos esenciales
+    if (!data.rol || !data.idOperario || !data.nombre) {
+      throw new Error("Datos de usuario incompletos");
+    }
+
+    // Guardar datos de usuario
+    const userData = {
+      nombre: data.nombre,
+      rol: parseInt(data.rol, 10),
+      idOperario: data.idOperario
+    };
+
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    // Redirección según rol
+    switch (userData.rol) {
+      case 1: // Admin
+      case 2: // Editor
+      case 3: // Usuario
+        await router.push("/dashboard");
+        break;
+      default:
+        await router.push("/403");
+    }
+
   } catch (error) {
-    console.error("⚠️ Error al autenticar:", error);
-    errorMessage.value = "⚠️ Error de conexión con el servidor.";
-    router.push("/403");
+    console.error("Error en autenticación:", error);
+    errorMessage.value = error.message || "❌ Error en el servidor. Intente nuevamente.";
+    password.value = ""; // Limpiar contraseña por seguridad
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -122,8 +140,6 @@ const goToForgotPassword = () => {
   router.push("/login-olvidar-contra");
 };
 </script>
-
-
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap');
 

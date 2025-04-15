@@ -3,11 +3,29 @@
     <div class="forgot-container">
       <div class="forgot-box">
         <h2>Recuperar Contraseña</h2>
-        <label for="email">Correo Electrónico</label>
-        <input type="email" id="email" v-model="email" placeholder="Ingrese su correo" />
-        <span v-if="showErrors && !email" class="error-message">¡Es obligatorio!</span>
 
-        <button class="btn-secundario" @click="sendRecoveryEmail">Enviar</button>
+        <!-- Campo de Usuario -->
+        <label for="username">Nombre de Usuario</label>
+        <input type="text" id="username" v-model="username" placeholder="Ingrese su usuario" />
+
+        <!-- Campo de Email -->
+        <label for="email">Email</label>
+        <input type="email" id="email" v-model="email" placeholder="Ingrese su email" />
+
+        <button v-if="!codeSent" class="btn-secundario" @click="sendVerificationCode">Enviar Código</button>
+
+        <!-- Campo de Código de Verificación -->
+        <div v-if="codeSent">
+          <label for="code">Código de Verificación</label>
+          <input type="text" id="code" v-model="verificationCode" placeholder="Ingrese el código recibido" />
+
+          <!-- Campo de Nueva Contraseña -->
+          <label for="newPassword">Nueva Contraseña</label>
+          <input type="password" id="newPassword" v-model="newPassword" placeholder="Ingrese su nueva contraseña" />
+
+          <button class="btn-secundario" @click="resetPassword">Cambiar Contraseña</button>
+        </div>
+
         <p>
           <router-link to="/" class="back-link">Volver al Login</router-link>
         </p>
@@ -20,29 +38,62 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+const username = ref("");
 const email = ref("");
+const verificationCode = ref("");
+const newPassword = ref("");
 const showErrors = ref(false);
+const codeSent = ref(false);
 const router = useRouter();
 
-const sendRecoveryEmail = async () => {
+const sendVerificationCode = async () => {
   showErrors.value = true;
-  if (!email.value) return;
+  if (!username.value || !email.value) return;
 
   try {
-    const response = await fetch("http://localhost:8080/api/auth/forgot-password", {
+    const response = await fetch("http://localhost:8080/api/authEmail/send-code", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.value }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({ usuario: username.value, email: email.value }),
+    });
+
+    const responseText = await response.text(); // Captura la respuesta en texto
+
+    if (response.ok) {
+      //alert("Código enviado. Revisa tu correo electrónico.");
+      codeSent.value = true;
+    } else {
+      alert(responseText || "Usuario o email incorrecto.");
+    }
+  } catch (error) {
+    console.error("Error en el envío del código:", error);
+    alert("Hubo un problema con la solicitud. Inténtelo de nuevo.");
+  }
+};
+
+const resetPassword = async () => {
+  showErrors.value = true;
+  if (!username.value || !email.value || !verificationCode.value || !newPassword.value) return;
+
+  try {
+    const response = await fetch("http://localhost:8080/api/authEmail/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        usuario: username.value,
+        email: email.value,
+        code: verificationCode.value,
+        newPassword: newPassword.value,
+      }),
     });
 
     if (response.ok) {
-      alert("Se ha enviado un correo con instrucciones.");
+      router.push("/");
     } else {
-      const errorData = await response.json();
-      alert(errorData.message || "Error al enviar el correo.");
+      alert("Código incorrecto o expirado.");
     }
   } catch (error) {
-    console.error("Error en recuperación:", error);
+    console.error("Error al cambiar la contraseña:", error);
     alert("Hubo un problema con la solicitud. Inténtelo de nuevo.");
   }
 };
@@ -69,7 +120,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url("@/assets/Imagenes/FondoDashboard.jpg");
+  background-image: url("@/assets/imagenes/FondoDashboard.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

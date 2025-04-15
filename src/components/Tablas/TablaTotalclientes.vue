@@ -2,13 +2,12 @@
   <div class="primary-container">
     <div class="secundary-container">
       <div class="items">
-
-        <input class="buscador" type="text" v-model="busqueda" placeholder="Buscar cliente...">
-
-        <button @click="exportarClientesXLSX" class="btn-accion btn-exportar">Exportar Clientes</button>
+        <input class="buscador" type="text" v-model="busquedaGlobal" placeholder="Buscar cliente..."/>
+        <button @click="exportarClientesXLSX" class="btn-accion btn-exportar">
+          Exportar Clientes
+        </button>
       </div>
 
-      <!-- Contenedor de la tabla -->
       <div class="table-container">
         <table class="table">
           <thead>
@@ -24,7 +23,6 @@
             <th>Ocupación</th>
             <th>Residencia</th>
             <th>Prefijo</th>
-
             <th>Empresa que Vende</th>
             <th>RUC Vendedor</th>
             <th>Dirección Vendedor</th>
@@ -63,7 +61,7 @@
             <th>Nombres y Apellidos (Cliente)</th>
             <th>Nacionalidad (Cliente)</th>
             <th>Estado Civil (Cliente)</th>
-            <th class="acciones-td">Acciones</th>
+            <th>Acciones</th>
           </tr>
           </thead>
           <tbody>
@@ -79,7 +77,6 @@
             <td>{{ cliente.ocupacion }}</td>
             <td>{{ cliente.residencia }}</td>
             <td>{{ cliente.prefijoPais }}</td>
-
             <td>{{ cliente.empresaVende }}</td>
             <td>{{ cliente.rucVendedor }}</td>
             <td>{{ cliente.direccionVendedor }}</td>
@@ -91,7 +88,6 @@
             <td>{{ cliente.cci }}</td>
             <td>{{ cliente.fechaEntregaProyecto }}</td>
             <td>{{ cliente.fechaFirmaContrato }}</td>
-
             <td>{{ cliente.areaMatriz }}</td>
             <td>{{ cliente.registrosPartidaMatriz }}</td>
             <td>{{ cliente.ubicacionLoteMatriz }}</td>
@@ -119,8 +115,8 @@
             <td>{{ cliente.nombresApellidosCliente }}</td>
             <td>{{ cliente.nacionalidadCliente }}</td>
             <td>{{ cliente.estadoCivilCliente }}</td>
-            <td>
-              <button @click="editarCliente(cliente.idCliente)" class="btn-accion btn-editar">
+            <td class="acciones-td">
+              <button @click="editarCliente(cliente.ID_Cliente)" class="btn-accion btn-editar">
                 <i class="fas fa-edit"></i>
                 <span class="accion-texto">Editar</span>
               </button>
@@ -135,57 +131,64 @@
 
 <script>
 import "@/assets/Tablas/Tablas.css";
+import axios from "axios";
 import * as XLSX from "xlsx";
-import axios from 'axios';
 
 export default {
   data() {
     return {
       clientes: [],
-      busqueda: ""
+      busquedaGlobal: "",
+      filtros: {
+        nombresApellidos: "",
+        direccion: "",
+        correoElectronico: "",
+        celularCliente: "",
+        documentoIdentificacion: "",
+        numeroIdentificacion: "",
+        estadoCivil: "",
+        ocupacion: "",
+        residencia: "",
+        prefijoPais: "",
+      },
     };
+  },
+  computed: {
+    clientesFiltrados() {
+      return this.clientes.filter((cliente) => {
+        const matchBusquedaGlobal = Object.values(cliente).some((valor) =>
+            valor?.toString().toLowerCase().includes(this.busquedaGlobal.toLowerCase())
+        );
+
+        const matchFiltros = Object.entries(this.filtros).every(([clave, valor]) => {
+          return !valor || (cliente[clave] && cliente[clave].toString().toLowerCase().includes(valor.toLowerCase()));
+        });
+
+        return matchBusquedaGlobal && matchFiltros;
+      });
+    },
   },
   mounted() {
     this.obtenerClientes();
   },
-  computed: {
-    clientesFiltrados() {
-      const texto = this.busqueda.toLowerCase();
-      return this.clientes.filter(cliente =>
-          (cliente.nombresApellidos || "").toLowerCase().includes(texto) ||
-          (cliente.correoElectronico || "").toLowerCase().includes(texto) ||
-          (cliente.numeroIdentificacion || "").toLowerCase().includes(texto)
-      );
-    }
-  },
   methods: {
     async obtenerClientes() {
       try {
-        const userData = JSON.parse(localStorage.getItem("user"));
-        const idOperario = userData ? userData.idOperario : null;
-
-        if (!idOperario) {
-          console.error("No se encontró un ID de operario en localStorage.");
-          return;
-        }
-
-        const response = await axios.get("http://localhost:8080/api/clientes/operario", {
-          headers: {
-            "X-User-ID": idOperario,
-          },
+        const { data } = await axios.get("http://localhost:8080/api/clientes", {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
         });
-
-        this.clientes = response.data;
-        console.log("Clientes cargados:", this.clientes);
+        this.clientes = data;
       } catch (error) {
         console.error("Error al obtener clientes:", error);
+        alert("Hubo un error al obtener los clientes.");
       }
     },
 
-
     editarCliente(idCliente) {
-      console.log("Editar cliente con ID:", idCliente);
+      this.$router.push({ name: "EditarCliente", params: { id: idCliente } });
     },
+
     exportarClientesXLSX() {
       const encabezados = [
         "Cliente", "Nombres y Apellidos", "Direccion", "Correo Electronico", "Celular", "Identificacion",
@@ -202,7 +205,6 @@ export default {
         "Nacionalidad (Cliente)", "Estado Civil (Cliente)"
       ];
 
-      // Recolectar datos por cliente (cada fila es un cliente)
       const filas = this.clientesFiltrados.map((cliente) => ([
         cliente.idCliente.toString().padStart(5, '0'),
         cliente.nombresApellidos,
@@ -255,19 +257,14 @@ export default {
         cliente.estadoCivilCliente
       ]));
 
-      // Insertar encabezados al principio de la matriz
-      const matrizFinal = [encabezados, ...filas];
-
-      // Crear hoja y libro
-      const ws = XLSX.utils.aoa_to_sheet(matrizFinal);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Clientes");
-
-      // Guardar archivo
-      XLSX.writeFile(wb, "clientes.xlsx");
-    }
-
-
-  }
+      const hoja = XLSX.utils.aoa_to_sheet([encabezados, ...filas]);
+      const libro = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(libro, hoja, "Clientes");
+      XLSX.writeFile(libro, "clientes.xlsx");
+    },
+  },
 };
 </script>
+
+<style scoped>
+</style>

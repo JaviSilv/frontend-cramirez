@@ -17,7 +17,7 @@
           </div>
           <ul v-show="menuAbierto.clientes">
             <li>
-              <router-link to="/dashboard/registrar-cliente">
+              <router-link to="/dashboard/formularios/registro-cliente">
                 <img :src="icons['nueva-cuenta.png']" alt="Registrar Cliente" class="icono" />
                 Registrar Cliente
               </router-link>
@@ -33,7 +33,7 @@
 
             <!-- Mostrar "Total Clientes" solo si ERES Jefe -->
             <li v-if="userRole === 1 || userRole === 3  ">
-              <router-link to="/dashboard/MisClientes">
+              <router-link to="/dashboard/clientes/mis-clientes">
                 <img :src="icons['simbolo-de-hombre-y-flecha-derecha.png']" alt="Total Clientes" class="icono" />
                 Total Clientes
               </router-link>
@@ -112,3 +112,13 @@ export default {
   }
 };
 </script>
+<style scoped>
+.contenido-principal{
+  top: 60px; /* altura exacta de la barra superior */
+  width: 100%;/* para que no se monte sobre la barra lateral */
+  height: 100%; /* para que no se monte sobre la barra superior */
+  box-sizing: border-box;
+  margin-left: -55px;
+}
+
+</style>

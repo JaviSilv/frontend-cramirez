@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { Chart, PieController, ArcElement, Tooltip, Legend } from "chart.js";
+import { Chart, PieController, ArcElement, Tooltip, Legend ,Filler } from "chart.js";
 
 export default {
   data() {
