@@ -76,7 +76,7 @@ const resetPassword = async () => {
   if (!username.value || !email.value || !verificationCode.value || !newPassword.value) return;
 
   try {
-    const response = await fetch("https://backendcramirez.onrender.com/api/authEmail/reset-password", {
+    const response = await fetch("https://seashell-app-gm22f.ondigitalocean.app//api/authEmail/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
