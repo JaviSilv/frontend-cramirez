@@ -51,7 +51,7 @@ const sendVerificationCode = async () => {
   if (!username.value || !email.value) return;
 
   try {
-    const response = await fetch("http://localhost:8080/api/authEmail/send-code", {
+    const response = await fetch("https://backendcramirez.onrender.com/api/authEmail/send-code", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({ usuario: username.value, email: email.value }),
@@ -76,7 +76,7 @@ const resetPassword = async () => {
   if (!username.value || !email.value || !verificationCode.value || !newPassword.value) return;
 
   try {
-    const response = await fetch("http://localhost:8080/api/authEmail/reset-password", {
+    const response = await fetch("https://backendcramirez.onrender.com/api/authEmail/reset-password", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
