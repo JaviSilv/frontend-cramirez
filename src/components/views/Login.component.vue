@@ -85,7 +85,7 @@ const validateForm = async () => {
   }
 
   try {
-    const response = await fetch("https://seashell-app-gm22f.ondigitalocean.app//api/auth/login", {
+    const response = await fetch("https://backendcramirez.onrender.com/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
